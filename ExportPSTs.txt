@@ -1,0 +1,40 @@
+$ExportPath = "I:\PSTs"
+
+$LogTime = Get-Date -Format "yyyy-MM-dd HH:mm:ss" 
+$LogFile  = "I:\Export.log"
+"$LogTime - Starte Export" | Out-File $LogFile -Append -Force
+net use i: \\0.0.0.0\ImportExport
+$mbx  = Get-Mailbox | Sort-Object Displayname
+
+$mbx | Export-Mailbox -PSTFolderPath $ExportPath -MaxThreads 8 -Confirm:$false | Out-File -append $LogFile	
+
+"_____________________________________________________________________________________________" | Out-File $LogFile -Append -Force
+$LogTime = Get-Date -Format "yyyy-MM-dd HH:mm:ss" 
+"$LogTime - Export fertig" | Out-File $LogFile -Append -Force
+
+$smtpServer = "0.0.0.0"
+$smtpFrom = "x@y.com"
+$smtpTo = "to@x.com"
+$messageSubject = "Export fertig...!"
+
+$message = New-Object System.Net.Mail.MailMessage $smtpfrom, $smtpto
+$message.Subject = $messageSubject
+$message.IsBodyHTML = $true
+
+$message.Body = "Watch the Anahng"
+$attachment = new-object System.Net.Mail.Attachment $LogFile
+$message.Attachments.Add($attachment)
+
+$smtp = New-Object Net.Mail.SmtpClient($smtpServer)
+$smtp.Send($message)
+
+
+pause
+exit
+
+
+
+
+
+
+
